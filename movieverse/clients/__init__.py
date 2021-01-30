@@ -1,0 +1,1 @@
+from .letterboxd_scraper import LetterboxdScraper
