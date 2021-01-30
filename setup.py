@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setuptools.setup(
     name="movieverse",
-    version="0.0.1",
+    version="0.0.2",
     author="Koen Baak",
     #author_email="koen.baak@fake.email",
     description="A package for movie viewing analysis",
@@ -19,4 +19,11 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    install_requires=[
+        'numpy',
+        'pandas',
+        'aiohttp',
+        'BeautifulSoup4',
+        'lxml'
+    ]
 )
