@@ -6,7 +6,7 @@ import asyncio
 from bs4 import BeautifulSoup
 import aiohttp
 # --- imports own packages and modules -----------------------------------------
-from .async_client import AsyncClient
+from movieverse.async_client import AsyncClient
 # ------------------------------------------------------------------------------
 
 class LetterboxdScraper(AsyncClient):
