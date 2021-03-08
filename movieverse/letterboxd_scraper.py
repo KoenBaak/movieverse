@@ -6,8 +6,9 @@ import asyncio
 from bs4 import BeautifulSoup
 import aiohttp
 # --- imports own packages and modules -----------------------------------------
-from movieverse.async_client import AsyncClient
+from movieverse.async_client import AsyncClient, session_handle
 # ------------------------------------------------------------------------------
+
 
 class LetterboxdScraper(AsyncClient):
 
@@ -58,8 +59,8 @@ class LetterboxdScraper(AsyncClient):
         return entries
 
     async def async_get_pages_until_done(self, func : Callable,
-                                   concurrent : int = 10,
-                                   start_page : int = 1) -> Any:
+                                         concurrent : int = 10,
+                                         start_page : int = 1) -> Any:
 
         if self.session is None:
             self.session = aiohttp.ClientSession()
@@ -67,7 +68,10 @@ class LetterboxdScraper(AsyncClient):
         result = []
         i = 0
         while True:
-            tasks = [func(n) for n in range(start_page+concurrent*i, start_page+concurrent*(i+1))]
+            tasks = [
+                func(n) for n in range(start_page+concurrent*i,
+                                       start_page+concurrent*(i+1))
+            ]
             i += 1
             results = await asyncio.gather(*tasks)
             for r in results:
@@ -76,9 +80,18 @@ class LetterboxdScraper(AsyncClient):
                 break
         return result
 
-    async def async_get_diary(self, username : str, concurrent_pages : int = 10) -> list:
-        async def get_page(pagenr: int): return await self.async_get_diary_page(username, pagenr)
-        return await self.async_get_pages_until_done(get_page, concurrent=concurrent_pages)
+    @session_handle
+    async def async_get_diary(self, username : str,
+                              concurrent_pages : int = 10) -> list:
+
+        async def get_page(pagenr: int):
+            return await self.async_get_diary_page(username, pagenr)
+
+        return await self.async_get_pages_until_done(get_page,
+                                                       concurrent=concurrent_pages)
 
     def get_diary(self, username : str, concurrent_pages : int = 10) -> list:
-        return self.run_coro(self.async_get_diary(username, concurrent_pages=concurrent_pages))
+        return self.run_coro(
+            self.async_get_diary(username, concurrent_pages=concurrent_pages,
+                                 close=True)
+        )

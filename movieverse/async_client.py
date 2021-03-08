@@ -1,10 +1,22 @@
 # --- imports from python standard library -------------------------------------
-from typing import Awaitable, Any
+from typing import Awaitable, Any, Callable
 import asyncio
 # --- external imports ---------------------------------------------------------
 import aiohttp
 # --- imports own packages and modules -----------------------------------------
 # ------------------------------------------------------------------------------
+
+
+def session_handle(func : Callable) -> Callable:
+
+    async def result_func(obj, *args, close : bool = False, **kwargs):
+        result = await func(obj, *args, **kwargs)
+        if close:
+            await obj.async_close_session()
+        return result
+
+    return result_func
+
 
 class AsyncClient:
 
@@ -12,7 +24,7 @@ class AsyncClient:
         self.session = None
 
     @staticmethod
-    def run_coro(coro):
+    def run_coro(coro : Awaitable):
         return asyncio.get_event_loop().run_until_complete(coro)
 
     @property
