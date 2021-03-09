@@ -15,7 +15,7 @@ def handle_session(func: Callable) -> Callable:
                           open_session: bool = False,
                           **kwargs) -> Awaitable:
 
-        if close_session and obj.session is None:
+        if open_session and obj.session is None:
             obj.session = aiohttp.ClientSession()
 
         result = await func(obj, *args, **kwargs)
