@@ -6,7 +6,7 @@ import asyncio
 from bs4 import BeautifulSoup
 import aiohttp
 # --- imports own packages and modules -----------------------------------------
-from movieverse.async_client import AsyncClient, session_handle
+from movieverse.async_client import AsyncClient, handle_session
 # ------------------------------------------------------------------------------
 
 
@@ -58,12 +58,10 @@ class LetterboxdScraper(AsyncClient):
             entries.append(info)
         return entries
 
+    @handle_session
     async def async_get_pages_until_done(self, func : Callable,
                                          concurrent : int = 10,
                                          start_page : int = 1) -> Any:
-
-        if self.session is None:
-            self.session = aiohttp.ClientSession()
 
         result = []
         i = 0
@@ -80,7 +78,7 @@ class LetterboxdScraper(AsyncClient):
                 break
         return result
 
-    @session_handle
+    @handle_session
     async def async_get_diary(self, username : str,
                               concurrent_pages : int = 10) -> list:
 
@@ -93,5 +91,5 @@ class LetterboxdScraper(AsyncClient):
     def get_diary(self, username : str, concurrent_pages : int = 10) -> list:
         return self.run_coro(
             self.async_get_diary(username, concurrent_pages=concurrent_pages,
-                                 close=True)
+                                 open_session=True, close_session=True)
         )

@@ -7,12 +7,22 @@ import aiohttp
 # ------------------------------------------------------------------------------
 
 
-def session_handle(func : Callable) -> Callable:
+def handle_session(func: Callable) -> Callable:
 
-    async def result_func(obj, *args, close : bool = False, **kwargs):
+    async def result_func(obj: 'AsyncClient',
+                          *args,
+                          close_session: bool = False,
+                          open_session: bool = False,
+                          **kwargs) -> Awaitable:
+
+        if close_session and obj.session is None:
+            obj.session = aiohttp.ClientSession()
+
         result = await func(obj, *args, **kwargs)
-        if close:
+
+        if close_session and obj.session is not None:
             await obj.async_close_session()
+
         return result
 
     return result_func
@@ -24,20 +34,17 @@ class AsyncClient:
         self.session = None
 
     @staticmethod
-    def run_coro(coro : Awaitable):
+    def run_coro(coro: Awaitable) -> Any:
         return asyncio.get_event_loop().run_until_complete(coro)
 
     @property
-    def has_session(self):
+    def has_session(self) -> bool:
         return self.session is not None
 
-    def get(self, url):
+    def get(self, url: str) -> Awaitable:
         if self.session is None:
             return aiohttp.get(url)
         return self.session.get(url)
 
     async def async_close_session(self):
         await self.session.close()
-
-    def close_session(self):
-        self.run_coro(self.async_close_session())
