@@ -48,3 +48,4 @@ class AsyncClient:
 
     async def async_close_session(self):
         await self.session.close()
+        self.session = None
