@@ -22,6 +22,10 @@ class MetaDataLibraryBase(ABC):
         pass
 
     @abstractmethod
+    def _append_data(self, movie_id: Any, field: str, value: Any) -> None:
+        pass
+
+    @abstractmethod
     def add_movie(self, movie_id: Any, title: str, year: int, **fields) -> None:
         pass
 
@@ -46,10 +50,15 @@ class MetaDataLibraryBase(ABC):
             raise ValueError(f"{self} has no field {field}")
         return self._get_data(movie_id, field)
 
-    def set_data(self, movie_id: Any, field: str) -> Any:
+    def set_data(self, movie_id: Any, field: str, value: Any) -> None:
         if field not in self.fields:
             raise ValueError(f"{self} has no field {field}")
-        return self._set_data(movie_id, field)
+        return self._set_data(movie_id, field, value)
+
+    def append_data(self, movie_id: Any, field: str, value: Any) -> None:
+        if field not in self.fields:
+            raise ValueError(f"{self} has no field {field}")
+        return self._append_data(movie_id, field, value)
 
     def title(self, movie_id: Any) -> str:
         return self._get_data(movie_id, "title")

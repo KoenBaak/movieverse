@@ -41,11 +41,13 @@ class MetaDataLib(MetaDataLibraryBase):
         return self._data[field][self._ids[movie_id]]
 
     def _set_data(self, movie_id: Any, field: str, value: Any) -> None:
+        self._data[field][self._ids[movie_id]] = value
+
+    def _append_data(self, movie_id: Any, field: str, value: Any) -> None:
         current_value = self._get_data(movie_id, field)
-        if isinstance(current_value, list):
-            current_value.append(value)
-        else:
-            self._data[field][self._ids[movie_id]] = value
+        if not isinstance(current_value, list):
+            raise TypeError("You can only append data to lists")
+        current_value.append(value)
 
     def add_movie(self, movie_id: Any, title: str, year: int, **fields) -> None:
         self._ids[movie_id] = len(self._ids)
