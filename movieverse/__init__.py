@@ -1,3 +1,3 @@
 from movieverse.letterboxd_scraper import LetterboxdScraper
 from movieverse.movieverse import Movieverse
-from movieverse.metadatalib import MetaDataLibraryBase, MetaDataLibrary
+from movieverse.metadatalib import MetaDataLib

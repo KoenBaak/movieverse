@@ -2,7 +2,7 @@
 from typing import Any, Union
 # ------ External imports ------------------------------------------------------
 # ------ Imports from own package or module ------------------------------------
-from movieverse.metadatalib_base import MetaDataLibraryBase
+from movieverse.metadatalib.base import MetaDataLibraryBase
 from movieverse.movie import Movie
 from movieverse.viewer import Viewer
 #-------------------------------------------------------------------------------
@@ -55,4 +55,4 @@ class Movieverse:
         return len(self.movies)
 
     def __repr__(self) -> str:
-        return f'<Movieverse {self.name} with {self.nviewers} viewers and {self.nmovies} movies>'
+        return f'<Movieverse {self.name}>'
